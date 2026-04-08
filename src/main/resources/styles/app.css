@@ -1,0 +1,37 @@
+.root {
+    -fx-font-family: "Segoe UI", "San Francisco", system-ui, sans-serif;
+    -fx-font-size: 13px;
+}
+
+.title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.heading {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.subheading {
+    -fx-font-weight: bold;
+}
+
+.error {
+    -fx-text-fill: #b00020;
+    -fx-max-width: 480px;
+}
+
+.table-view {
+    -fx-table-cell-border-color: transparent;
+}
+
+.charts-empty {
+    -fx-font-size: 14px;
+    -fx-padding: 16px 0 8px 0;
+}
+
+.health-summary {
+    -fx-padding: 4px 0 8px 0;
+    -fx-max-width: 720px;
+}

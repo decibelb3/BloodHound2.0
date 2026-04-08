@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="12.0">
+            <padding>
+                <Insets bottom="8.0" left="16.0" right="16.0" top="12.0"/>
+            </padding>
+            <children>
+                <Label fx:id="welcomeLabel" styleClass="heading"/>
+                <HBox HBox.hgrow="ALWAYS"/>
+                <Button mnemonicParsing="false" onAction="#onLogout" text="Log out"/>
+            </children>
+        </HBox>
+    </top>
+    <center>
+        <TabPane fx:id="dashboardTabPane" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab closable="false" text="Measurements">
+                    <content>
+                        <VBox spacing="12.0">
+                            <padding>
+                                <Insets bottom="16.0" left="16.0" right="16.0" top="8.0"/>
+                            </padding>
+                            <children>
+                                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                    <children>
+                                        <Label text="Measurement order"/>
+                                        <ComboBox fx:id="orderCombo" prefWidth="220.0"/>
+                                    </children>
+                                </HBox>
+                                <Label styleClass="subheading" text="Your measurements (per-user data)"/>
+                                <Label styleClass="subheading" text="Latest health summary"/>
+                                <Label fx:id="healthSummaryLabel" styleClass="health-summary" wrapText="true"/>
+                                <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="280.0">
+                                    <content>
+                                        <TableView fx:id="measurementTable" prefHeight="260.0">
+                                            <columns>
+                                                <TableColumn fx:id="dateTimeColumn" prefWidth="150.0" text="Date / time"/>
+                                                <TableColumn fx:id="systolicColumn" prefWidth="70.0" text="Sys"/>
+                                                <TableColumn fx:id="diastolicColumn" prefWidth="70.0" text="Dia"/>
+                                                <TableColumn fx:id="tcColumn" prefWidth="90.0" text="TC"/>
+                                                <TableColumn fx:id="hdlColumn" prefWidth="70.0" text="HDL"/>
+                                                <TableColumn fx:id="ldlColumn" prefWidth="70.0" text="LDL"/>
+                                                <TableColumn fx:id="weightColumn" prefWidth="80.0" text="Weight"/>
+                                            </columns>
+                                        </TableView>
+                                    </content>
+                                </ScrollPane>
+                                <Separator/>
+                                <Label styleClass="subheading" text="Add measurement"/>
+                                <GridPane hgap="10.0" vgap="8.0">
+                                    <children>
+                                        <Label text="Systolic" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                        <TextField fx:id="systolicField" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                                        <Label text="Diastolic" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                                        <TextField fx:id="diastolicField" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+                                        <Label text="Total chol." GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                        <TextField fx:id="totalCholesterolField" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                                        <Label text="HDL" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                                        <TextField fx:id="hdlField" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                                        <Label text="LDL" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                        <TextField fx:id="ldlField" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                                        <Label text="Weight" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                                        <TextField fx:id="weightField" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+                                        <Label text="Date / time" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                                        <TextField fx:id="measurementDateTimeField" prefWidth="260.0" promptText="M/d/yyyy h:mm AM or PM" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3"/>
+                                    </children>
+                                </GridPane>
+                                <Label fx:id="formErrorLabel" styleClass="error" wrapText="true"/>
+                                <Button mnemonicParsing="false" onAction="#onAddMeasurement" text="Save measurement"/>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab closable="false" text="Trends">
+                    <content>
+                        <VBox spacing="12.0">
+                            <padding>
+                                <Insets bottom="16.0" left="16.0" right="16.0" top="8.0"/>
+                            </padding>
+                            <children>
+                                <Label styleClass="subheading" text="Health metrics over time (your data only)"/>
+                                <Label fx:id="chartsNoDataLabel" styleClass="charts-empty" text="No data available" visible="false" managed="false"/>
+                                <ScrollPane fx:id="chartsScrollPane" fitToWidth="true" prefHeight="560.0">
+                                    <content>
+                                        <VBox spacing="20.0">
+                                            <padding>
+                                                <Insets bottom="8.0" right="8.0"/>
+                                            </padding>
+                                            <children>
+                                                <Label styleClass="subheading" text="Blood Pressure Trend"/>
+                                                <LineChart fx:id="bpChart" animated="false" legendVisible="true" minHeight="200.0" prefHeight="240.0">
+                                                    <xAxis>
+                                                        <CategoryAxis side="BOTTOM" label="Time"/>
+                                                    </xAxis>
+                                                    <yAxis>
+                                                        <NumberAxis autoRanging="true" label="mmHg" side="LEFT"/>
+                                                    </yAxis>
+                                                </LineChart>
+                                                <Label styleClass="subheading" text="Cholesterol Trend"/>
+                                                <LineChart fx:id="cholesterolChart" animated="false" legendVisible="true" minHeight="200.0" prefHeight="240.0">
+                                                    <xAxis>
+                                                        <CategoryAxis side="BOTTOM" label="Time"/>
+                                                    </xAxis>
+                                                    <yAxis>
+                                                        <NumberAxis autoRanging="true" label="mg/dL" side="LEFT"/>
+                                                    </yAxis>
+                                                </LineChart>
+                                                <Label styleClass="subheading" text="Weight Trend"/>
+                                                <LineChart fx:id="weightChart" animated="false" legendVisible="true" minHeight="200.0" prefHeight="240.0">
+                                                    <xAxis>
+                                                        <CategoryAxis side="BOTTOM" label="Time"/>
+                                                    </xAxis>
+                                                    <yAxis>
+                                                        <NumberAxis autoRanging="true" label="lbs" side="LEFT"/>
+                                                    </yAxis>
+                                                </LineChart>
+                                            </children>
+                                        </VBox>
+                                    </content>
+                                </ScrollPane>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </center>
+</BorderPane>

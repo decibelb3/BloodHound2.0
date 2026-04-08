@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="14.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <padding>
+        <Insets bottom="28.0" left="28.0" right="28.0" top="28.0"/>
+    </padding>
+    <children>
+        <Label styleClass="title" text="Create account"/>
+        <GridPane hgap="10.0" vgap="10.0">
+            <children>
+                <Label text="Username" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <TextField fx:id="usernameField" prefWidth="280.0" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                <Label text="Email" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <TextField fx:id="emailField" prefWidth="280.0" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <Label text="Password" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <PasswordField fx:id="passwordField" prefWidth="280.0" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                <Label text="Confirm" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <PasswordField fx:id="confirmPasswordField" prefWidth="280.0" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+            </children>
+        </GridPane>
+        <Label fx:id="errorLabel" styleClass="error" wrapText="true"/>
+        <Button defaultButton="true" mnemonicParsing="false" onAction="#onRegister" text="Register"/>
+        <Button mnemonicParsing="false" onAction="#onBackToLogin" text="Back to sign in"/>
+    </children>
+</VBox>
