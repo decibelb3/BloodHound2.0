@@ -1,1 +1,3 @@
 target/
+*.class
+src/main/java/com/bloodhound2/config/DatabaseConfig.java
