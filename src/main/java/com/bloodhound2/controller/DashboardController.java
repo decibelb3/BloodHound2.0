@@ -10,13 +10,17 @@ import com.bloodhound2.service.MeasurementService;
 import com.bloodhound2.service.SessionContext;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TabPane;
@@ -24,6 +28,8 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
@@ -152,8 +158,14 @@ public class DashboardController {
         weightColumn.setCellValueFactory(c -> new SimpleStringProperty(str(c.getValue().getWeight())));
 
         actionColumn.setCellFactory(col -> new TableCell<>() {
+            private final Button editBtn = new Button("Edit");
             private final Button deleteBtn = new Button("Delete");
+            private final HBox box = new HBox(4, editBtn, deleteBtn);
             {
+                editBtn.setOnAction(e -> {
+                    Measurement m = getTableView().getItems().get(getIndex());
+                    onEditMeasurement(m);
+                });
                 deleteBtn.setOnAction(e -> {
                     Measurement m = getTableView().getItems().get(getIndex());
                     onDeleteMeasurement(m);
@@ -163,7 +175,7 @@ public class DashboardController {
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                setGraphic(empty ? null : deleteBtn);
+                setGraphic(empty ? null : box);
             }
         });
 
@@ -224,6 +236,83 @@ public class DashboardController {
         } catch (SQLException e) {
             formErrorLabel.setText("Could not save measurement.");
         }
+    }
+
+    private void onEditMeasurement(Measurement original) {
+        Dialog<Measurement> dialog = new Dialog<>();
+        dialog.setTitle("Edit measurement");
+        dialog.setHeaderText("Editing measurement from " + DT_DISPLAY.format(original.getMeasurementDateTime()));
+
+        ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
+
+        TextField sysField = new TextField(str(original.getSystolic()));
+        TextField diaField = new TextField(str(original.getDiastolic()));
+        TextField tcField = new TextField(str(original.getTotalCholesterol()));
+        TextField hdlEditField = new TextField(str(original.getHdl()));
+        TextField ldlEditField = new TextField(str(original.getLdl()));
+        TextField wField = new TextField(str(original.getWeight()));
+        TextField dtField = new TextField(DT_DISPLAY.format(original.getMeasurementDateTime()));
+        Label errorLabel = new Label();
+        errorLabel.setStyle("-fx-text-fill: red;");
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(8);
+        grid.add(new Label("Systolic"), 0, 0);        grid.add(sysField, 1, 0);
+        grid.add(new Label("Diastolic"), 2, 0);       grid.add(diaField, 3, 0);
+        grid.add(new Label("Total chol."), 0, 1);     grid.add(tcField, 1, 1);
+        grid.add(new Label("HDL"), 2, 1);             grid.add(hdlEditField, 3, 1);
+        grid.add(new Label("LDL"), 0, 2);             grid.add(ldlEditField, 1, 2);
+        grid.add(new Label("Weight"), 2, 2);          grid.add(wField, 3, 2);
+        grid.add(new Label("Date / time"), 0, 3);     grid.add(dtField, 1, 3);
+        grid.add(errorLabel, 0, 4);
+        GridPane.setColumnSpan(errorLabel, 4);
+        dialog.getDialogPane().setContent(grid);
+
+        Node saveButton = dialog.getDialogPane().lookupButton(saveButtonType);
+        saveButton.addEventFilter(ActionEvent.ACTION, event -> {
+            try {
+                parseIntOrNull(sysField.getText());
+                parseIntOrNull(diaField.getText());
+                parseDoubleOrNull(tcField.getText());
+                parseDoubleOrNull(hdlEditField.getText());
+                parseDoubleOrNull(ldlEditField.getText());
+                parseDoubleOrNull(wField.getText());
+                parseDateTimeOrNow(dtField.getText());
+                errorLabel.setText("");
+            } catch (NumberFormatException e) {
+                errorLabel.setText("Enter valid numbers for numeric fields.");
+                event.consume();
+            } catch (DateTimeParseException e) {
+                errorLabel.setText("Use US date/time, e.g. 3/31/2026 3:45 PM");
+                event.consume();
+            }
+        });
+
+        dialog.setResultConverter(buttonType -> {
+            if (buttonType != saveButtonType) return null;
+            return new Measurement(
+                    original.getMeasurementId(),
+                    original.getUserId(),
+                    parseIntOrNull(sysField.getText()),
+                    parseIntOrNull(diaField.getText()),
+                    parseDoubleOrNull(tcField.getText()),
+                    parseDoubleOrNull(hdlEditField.getText()),
+                    parseDoubleOrNull(ldlEditField.getText()),
+                    parseDoubleOrNull(wField.getText()),
+                    parseDateTimeOrNow(dtField.getText()));
+        });
+
+        dialog.showAndWait().ifPresent(updated -> {
+            try {
+                measurementService.editMeasurement(updated);
+                refreshTable();
+                refreshCharts();
+            } catch (SQLException e) {
+                formErrorLabel.setText("Could not update measurement.");
+            }
+        });
     }
 
     private void onDeleteMeasurement(Measurement measurement) {

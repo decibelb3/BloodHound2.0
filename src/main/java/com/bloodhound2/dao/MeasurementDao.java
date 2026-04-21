@@ -97,6 +97,30 @@ public class MeasurementDao {
     }
 
     /**
+     * Updates all fields of a measurement by ID, restricted to the owning user for safety.
+     *
+     * @return true if a row was updated
+     */
+    public boolean updateByIdAndUserId(Measurement measurement) throws SQLException {
+        final String sql =
+                "UPDATE measurements SET systolic=?, diastolic=?, total_cholesterol=?, hdl=?, ldl=?, "
+                        + "weight=?, measurement_datetime=? WHERE measurement_id=? AND user_id=?";
+        try (Connection conn = databaseConfig.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            setNullableInt(ps, 1, measurement.getSystolic());
+            setNullableInt(ps, 2, measurement.getDiastolic());
+            setNullableDouble(ps, 3, measurement.getTotalCholesterol());
+            setNullableDouble(ps, 4, measurement.getHdl());
+            setNullableDouble(ps, 5, measurement.getLdl());
+            setNullableDouble(ps, 6, measurement.getWeight());
+            ps.setTimestamp(7, Timestamp.valueOf(measurement.getMeasurementDateTime()));
+            ps.setLong(8, measurement.getMeasurementId());
+            ps.setLong(9, measurement.getUserId());
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    /**
      * Deletes a measurement by ID, restricted to the owning user for safety.
      *
      * @return true if a row was deleted

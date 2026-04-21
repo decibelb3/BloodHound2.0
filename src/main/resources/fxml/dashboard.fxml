@@ -62,7 +62,7 @@
                                                 <TableColumn fx:id="hdlColumn" prefWidth="70.0" text="HDL"/>
                                                 <TableColumn fx:id="ldlColumn" prefWidth="70.0" text="LDL"/>
                                                 <TableColumn fx:id="weightColumn" prefWidth="80.0" text="Weight"/>
-                                                <TableColumn fx:id="actionColumn" prefWidth="80.0" text=""/>
+                                                <TableColumn fx:id="actionColumn" prefWidth="140.0" text=""/>
                                             </columns>
                                         </TableView>
                                     </content>

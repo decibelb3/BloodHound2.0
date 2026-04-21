@@ -53,6 +53,15 @@ public class MeasurementService {
     }
 
     /**
+     * Updates the measurement with the given ID, only if it belongs to {@code userId}.
+     *
+     * @return true if the row was updated
+     */
+    public boolean editMeasurement(Measurement measurement) throws SQLException {
+        return measurementDao.updateByIdAndUserId(measurement);
+    }
+
+    /**
      * Deletes the measurement with the given ID, only if it belongs to {@code userId}.
      *
      * @return true if the row was deleted
