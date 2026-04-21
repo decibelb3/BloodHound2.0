@@ -24,7 +24,7 @@ public class MeasurementDao {
     public long insert(Measurement measurement) throws SQLException {
         final String sql =
                 "INSERT INTO measurements (user_id, systolic, diastolic, total_cholesterol, hdl, ldl, "
-                        + "weight, measurement_datetime) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                        + "weight, notes, measurement_datetime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = databaseConfig.getConnection();
                 PreparedStatement ps =
                         conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -35,7 +35,8 @@ public class MeasurementDao {
             setNullableDouble(ps, 5, measurement.getHdl());
             setNullableDouble(ps, 6, measurement.getLdl());
             setNullableDouble(ps, 7, measurement.getWeight());
-            ps.setTimestamp(8, Timestamp.valueOf(measurement.getMeasurementDateTime()));
+            setNullableString(ps, 8, measurement.getNotes());
+            ps.setTimestamp(9, Timestamp.valueOf(measurement.getMeasurementDateTime()));
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {
@@ -52,7 +53,7 @@ public class MeasurementDao {
     public List<Measurement> findByUserIdChronological(long userId) throws SQLException {
         final String sql =
                 "SELECT measurement_id, user_id, systolic, diastolic, total_cholesterol, hdl, ldl, "
-                        + "weight, measurement_datetime FROM measurements WHERE user_id = ? "
+                        + "weight, notes, measurement_datetime FROM measurements WHERE user_id = ? "
                         + "ORDER BY measurement_datetime ASC, measurement_id ASC";
         return queryList(userId, sql);
     }
@@ -63,7 +64,7 @@ public class MeasurementDao {
     public List<Measurement> findByUserIdNewestFirst(long userId) throws SQLException {
         final String sql =
                 "SELECT measurement_id, user_id, systolic, diastolic, total_cholesterol, hdl, ldl, "
-                        + "weight, measurement_datetime FROM measurements WHERE user_id = ? "
+                        + "weight, notes, measurement_datetime FROM measurements WHERE user_id = ? "
                         + "ORDER BY measurement_datetime DESC, measurement_id DESC";
         return queryList(userId, sql);
     }
@@ -91,9 +92,10 @@ public class MeasurementDao {
         Double hdl = rs.getObject("hdl") != null ? rs.getDouble("hdl") : null;
         Double ldl = rs.getObject("ldl") != null ? rs.getDouble("ldl") : null;
         Double w = rs.getObject("weight") != null ? rs.getDouble("weight") : null;
+        String notes = rs.getString("notes");
         Timestamp ts = rs.getTimestamp("measurement_datetime");
         LocalDateTime dt = java.util.Objects.requireNonNull(ts, "measurement_datetime").toLocalDateTime();
-        return new Measurement(mid, uid, sys, dia, tc, hdl, ldl, w, dt);
+        return new Measurement(mid, uid, sys, dia, tc, hdl, ldl, w, notes, dt);
     }
 
     /**
@@ -104,7 +106,7 @@ public class MeasurementDao {
     public boolean updateByIdAndUserId(Measurement measurement) throws SQLException {
         final String sql =
                 "UPDATE measurements SET systolic=?, diastolic=?, total_cholesterol=?, hdl=?, ldl=?, "
-                        + "weight=?, measurement_datetime=? WHERE measurement_id=? AND user_id=?";
+                        + "weight=?, notes=?, measurement_datetime=? WHERE measurement_id=? AND user_id=?";
         try (Connection conn = databaseConfig.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
             setNullableInt(ps, 1, measurement.getSystolic());
@@ -113,9 +115,10 @@ public class MeasurementDao {
             setNullableDouble(ps, 4, measurement.getHdl());
             setNullableDouble(ps, 5, measurement.getLdl());
             setNullableDouble(ps, 6, measurement.getWeight());
-            ps.setTimestamp(7, Timestamp.valueOf(measurement.getMeasurementDateTime()));
-            ps.setLong(8, measurement.getMeasurementId());
-            ps.setLong(9, measurement.getUserId());
+            setNullableString(ps, 7, measurement.getNotes());
+            ps.setTimestamp(8, Timestamp.valueOf(measurement.getMeasurementDateTime()));
+            ps.setLong(9, measurement.getMeasurementId());
+            ps.setLong(10, measurement.getUserId());
             return ps.executeUpdate() > 0;
         }
     }
@@ -140,6 +143,14 @@ public class MeasurementDao {
             ps.setObject(index, null);
         } else {
             ps.setInt(index, value);
+        }
+    }
+
+    private static void setNullableString(PreparedStatement ps, int index, String value) throws SQLException {
+        if (value == null || value.isBlank()) {
+            ps.setObject(index, null);
+        } else {
+            ps.setString(index, value.trim());
         }
     }
 

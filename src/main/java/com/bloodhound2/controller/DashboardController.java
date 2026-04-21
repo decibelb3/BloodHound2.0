@@ -83,6 +83,9 @@ public class DashboardController {
     private TableColumn<Measurement, String> weightColumn;
 
     @FXML
+    private TableColumn<Measurement, String> notesColumn;
+
+    @FXML
     private TableColumn<Measurement, Void> actionColumn;
 
     @FXML
@@ -105,6 +108,9 @@ public class DashboardController {
 
     @FXML
     private TextField measurementDateTimeField;
+
+    @FXML
+    private TextField notesField;
 
     @FXML
     private Label formErrorLabel;
@@ -156,6 +162,7 @@ public class DashboardController {
         hdlColumn.setCellValueFactory(c -> new SimpleStringProperty(str(c.getValue().getHdl())));
         ldlColumn.setCellValueFactory(c -> new SimpleStringProperty(str(c.getValue().getLdl())));
         weightColumn.setCellValueFactory(c -> new SimpleStringProperty(str(c.getValue().getWeight())));
+        notesColumn.setCellValueFactory(c -> new SimpleStringProperty(str(c.getValue().getNotes())));
 
         actionColumn.setCellFactory(col -> new TableCell<>() {
             private final Button editBtn = new Button("Edit");
@@ -217,9 +224,10 @@ public class DashboardController {
             Double hdl = parseDoubleOrNull(hdlField.getText());
             Double ldl = parseDoubleOrNull(ldlField.getText());
             Double w = parseDoubleOrNull(weightField.getText());
+            String notes = notesField.getText();
             LocalDateTime when = parseDateTimeOrNow(measurementDateTimeField.getText());
 
-            measurementService.addMeasurement(user.getUserId(), sys, dia, tc, hdl, ldl, w, when);
+            measurementService.addMeasurement(user.getUserId(), sys, dia, tc, hdl, ldl, w, notes, when);
             HealthAlertResult health = healthAlertService.analyze(sys, dia, tc, hdl, ldl);
             applyHealthSummary(health);
             showHealthAlertDialog(health);
@@ -253,6 +261,8 @@ public class DashboardController {
         TextField ldlEditField = new TextField(str(original.getLdl()));
         TextField wField = new TextField(str(original.getWeight()));
         TextField dtField = new TextField(DT_DISPLAY.format(original.getMeasurementDateTime()));
+        TextField notesEditField = new TextField(str(original.getNotes()));
+        notesEditField.setPromptText("Optional notes");
         Label errorLabel = new Label();
         errorLabel.setStyle("-fx-text-fill: red;");
 
@@ -266,7 +276,9 @@ public class DashboardController {
         grid.add(new Label("LDL"), 0, 2);             grid.add(ldlEditField, 1, 2);
         grid.add(new Label("Weight"), 2, 2);          grid.add(wField, 3, 2);
         grid.add(new Label("Date / time"), 0, 3);     grid.add(dtField, 1, 3);
-        grid.add(errorLabel, 0, 4);
+        grid.add(new Label("Notes"), 0, 4);           grid.add(notesEditField, 1, 4);
+        GridPane.setColumnSpan(notesEditField, 3);
+        grid.add(errorLabel, 0, 5);
         GridPane.setColumnSpan(errorLabel, 4);
         dialog.getDialogPane().setContent(grid);
 
@@ -301,6 +313,7 @@ public class DashboardController {
                     parseDoubleOrNull(hdlEditField.getText()),
                     parseDoubleOrNull(ldlEditField.getText()),
                     parseDoubleOrNull(wField.getText()),
+                    notesEditField.getText(),
                     parseDateTimeOrNow(dtField.getText()));
         });
 
@@ -347,6 +360,7 @@ public class DashboardController {
         hdlField.clear();
         ldlField.clear();
         weightField.clear();
+        notesField.clear();
     }
 
     private void refreshTable() {

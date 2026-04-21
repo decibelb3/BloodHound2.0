@@ -62,6 +62,7 @@
                                                 <TableColumn fx:id="hdlColumn" prefWidth="70.0" text="HDL"/>
                                                 <TableColumn fx:id="ldlColumn" prefWidth="70.0" text="LDL"/>
                                                 <TableColumn fx:id="weightColumn" prefWidth="80.0" text="Weight"/>
+                                                <TableColumn fx:id="notesColumn" prefWidth="180.0" text="Notes"/>
                                                 <TableColumn fx:id="actionColumn" prefWidth="140.0" text=""/>
                                             </columns>
                                         </TableView>
@@ -85,6 +86,8 @@
                                         <TextField fx:id="weightField" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
                                         <Label text="Date / time" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
                                         <TextField fx:id="measurementDateTimeField" prefWidth="260.0" promptText="M/d/yyyy h:mm AM or PM" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3"/>
+                                        <Label text="Notes" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                                        <TextField fx:id="notesField" prefWidth="340.0" promptText="Optional notes" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="4"/>
                                     </children>
                                 </GridPane>
                                 <Label fx:id="formErrorLabel" styleClass="error" wrapText="true"/>

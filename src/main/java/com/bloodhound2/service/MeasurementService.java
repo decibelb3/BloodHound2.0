@@ -23,6 +23,7 @@ public class MeasurementService {
             Double hdl,
             Double ldl,
             Double weight,
+            String notes,
             LocalDateTime measurementDateTime)
             throws SQLException {
         if (measurementDateTime == null) {
@@ -38,6 +39,7 @@ public class MeasurementService {
                         hdl,
                         ldl,
                         weight,
+                        notes,
                         measurementDateTime);
         return measurementDao.insert(m);
     }

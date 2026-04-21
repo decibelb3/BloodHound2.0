@@ -24,11 +24,15 @@ CREATE TABLE IF NOT EXISTS measurements (
     ldl DECIMAL(10, 2) NULL,
     weight DECIMAL(10, 2) NULL,
     measurement_datetime DATETIME NOT NULL,
+    notes VARCHAR(500) NULL,
     CONSTRAINT fk_measurements_user
         FOREIGN KEY (user_id) REFERENCES users (user_id)
         ON DELETE CASCADE,
     KEY idx_measurements_user_datetime (user_id, measurement_datetime)
 ) ENGINE=InnoDB;
+
+-- Migration: add notes column to existing databases
+ ALTER TABLE measurements ADD COLUMN notes VARCHAR(500) NULL;
 
 -- Optional: create application user (run as MySQL root or admin)
 -- CREATE USER IF NOT EXISTS 'bloodhound_user'@'localhost' IDENTIFIED BY 'change_me';

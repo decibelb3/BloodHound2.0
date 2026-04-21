@@ -13,6 +13,7 @@ public final class Measurement {
     private final Double hdl;
     private final Double ldl;
     private final Double weight;
+    private final String notes;
     private final LocalDateTime measurementDateTime;
 
     public Measurement(
@@ -24,6 +25,7 @@ public final class Measurement {
             Double hdl,
             Double ldl,
             Double weight,
+            String notes,
             LocalDateTime measurementDateTime) {
         this.measurementId = measurementId;
         this.userId = userId;
@@ -33,6 +35,7 @@ public final class Measurement {
         this.hdl = hdl;
         this.ldl = ldl;
         this.weight = weight;
+        this.notes = notes;
         this.measurementDateTime = Objects.requireNonNull(measurementDateTime, "measurementDateTime");
     }
 
@@ -68,12 +71,16 @@ public final class Measurement {
         return weight;
     }
 
+    public String getNotes() {
+        return notes;
+    }
+
     public LocalDateTime getMeasurementDateTime() {
         return measurementDateTime;
     }
 
     public Measurement withId(long id) {
         return new Measurement(
-                id, userId, systolic, diastolic, totalCholesterol, hdl, ldl, weight, measurementDateTime);
+                id, userId, systolic, diastolic, totalCholesterol, hdl, ldl, weight, notes, measurementDateTime);
     }
 }
