@@ -51,4 +51,13 @@ public class MeasurementService {
     public List<Measurement> listForUserChronological(long userId) throws SQLException {
         return measurementDao.findByUserIdChronological(userId);
     }
+
+    /**
+     * Deletes the measurement with the given ID, only if it belongs to {@code userId}.
+     *
+     * @return true if the row was deleted
+     */
+    public boolean deleteMeasurement(long measurementId, long userId) throws SQLException {
+        return measurementDao.deleteByIdAndUserId(measurementId, userId);
+    }
 }

@@ -14,10 +14,13 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -72,6 +75,9 @@ public class DashboardController {
 
     @FXML
     private TableColumn<Measurement, String> weightColumn;
+
+    @FXML
+    private TableColumn<Measurement, Void> actionColumn;
 
     @FXML
     private TextField systolicField;
@@ -145,6 +151,22 @@ public class DashboardController {
         ldlColumn.setCellValueFactory(c -> new SimpleStringProperty(str(c.getValue().getLdl())));
         weightColumn.setCellValueFactory(c -> new SimpleStringProperty(str(c.getValue().getWeight())));
 
+        actionColumn.setCellFactory(col -> new TableCell<>() {
+            private final Button deleteBtn = new Button("Delete");
+            {
+                deleteBtn.setOnAction(e -> {
+                    Measurement m = getTableView().getItems().get(getIndex());
+                    onDeleteMeasurement(m);
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : deleteBtn);
+            }
+        });
+
         measurementDateTimeField.setText(DT_DISPLAY.format(LocalDateTime.now()));
         refreshTable();
 
@@ -202,6 +224,31 @@ public class DashboardController {
         } catch (SQLException e) {
             formErrorLabel.setText("Could not save measurement.");
         }
+    }
+
+    private void onDeleteMeasurement(Measurement measurement) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Delete measurement");
+        confirm.setHeaderText("Delete this measurement?");
+        confirm.setContentText(
+                "Recorded on " + DT_DISPLAY.format(measurement.getMeasurementDateTime()) + "\nThis cannot be undone.");
+        confirm.showAndWait().ifPresent(response -> {
+            if (response != ButtonType.OK) {
+                return;
+            }
+            var user = SessionContext.getCurrentUser();
+            if (user == null || user.getUserId() == null || measurement.getMeasurementId() == null) {
+                formErrorLabel.setText("Could not delete measurement.");
+                return;
+            }
+            try {
+                measurementService.deleteMeasurement(measurement.getMeasurementId(), user.getUserId());
+                refreshTable();
+                refreshCharts();
+            } catch (SQLException e) {
+                formErrorLabel.setText("Could not delete measurement.");
+            }
+        });
     }
 
     private void clearForm() {

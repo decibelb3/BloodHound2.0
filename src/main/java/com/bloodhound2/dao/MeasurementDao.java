@@ -96,6 +96,21 @@ public class MeasurementDao {
         return new Measurement(mid, uid, sys, dia, tc, hdl, ldl, w, dt);
     }
 
+    /**
+     * Deletes a measurement by ID, restricted to the owning user for safety.
+     *
+     * @return true if a row was deleted
+     */
+    public boolean deleteByIdAndUserId(long measurementId, long userId) throws SQLException {
+        final String sql = "DELETE FROM measurements WHERE measurement_id = ? AND user_id = ?";
+        try (Connection conn = databaseConfig.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, measurementId);
+            ps.setLong(2, userId);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
     private static void setNullableInt(PreparedStatement ps, int index, Integer value) throws SQLException {
         if (value == null) {
             ps.setObject(index, null);
