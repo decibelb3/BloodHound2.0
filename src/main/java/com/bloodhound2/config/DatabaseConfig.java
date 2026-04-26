@@ -10,8 +10,8 @@ import java.sql.SQLException;
 public final class DatabaseConfig {
 
     private static final String JDBC_URL = "jdbc:mysql://localhost:3306/bloodhound2";
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "swebloodhound";
+    private static final String USERNAME = "bloodhound_user";
+    private static final String PASSWORD = "change_me";
 
     static {
         try {

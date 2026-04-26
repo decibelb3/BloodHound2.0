@@ -57,6 +57,7 @@ public class RegisterController {
         } catch (IllegalArgumentException e) {
             errorLabel.setText(e.getMessage());
         } catch (SQLException e) {
+            e.printStackTrace();   // <-- ADD THIS LINE
             errorLabel.setText("Could not save account. Check the database and try again.");
         }
     }
