@@ -95,6 +95,18 @@ public class DashboardController {
     private TextField diastolicField;
 
     @FXML
+    private TextField weightField;
+
+    @FXML
+    private TextField bpDateTimeField;
+
+    @FXML
+    private TextField bpNotesField;
+
+    @FXML
+    private Label bpFormErrorLabel;
+
+    @FXML
     private TextField totalCholesterolField;
 
     @FXML
@@ -104,16 +116,13 @@ public class DashboardController {
     private TextField ldlField;
 
     @FXML
-    private TextField weightField;
+    private TextField cholDateTimeField;
 
     @FXML
-    private TextField measurementDateTimeField;
+    private TextField cholNotesField;
 
     @FXML
-    private TextField notesField;
-
-    @FXML
-    private Label formErrorLabel;
+    private Label cholFormErrorLabel;
 
     @FXML
     private Label healthSummaryLabel;
@@ -186,7 +195,8 @@ public class DashboardController {
             }
         });
 
-        measurementDateTimeField.setText(DT_DISPLAY.format(LocalDateTime.now()));
+        bpDateTimeField.setText(DT_DISPLAY.format(LocalDateTime.now()));
+        cholDateTimeField.setText(DT_DISPLAY.format(LocalDateTime.now()));
         refreshTable();
 
         dashboardTabPane
@@ -210,39 +220,68 @@ public class DashboardController {
     }
 
     @FXML
-    private void onAddMeasurement() {
-        formErrorLabel.setText("");
+    private void onAddBloodPressure() {
+        bpFormErrorLabel.setText("");
         var user = SessionContext.getCurrentUser();
         if (user == null || user.getUserId() == null) {
-            formErrorLabel.setText("Not signed in.");
+            bpFormErrorLabel.setText("Not signed in.");
             return;
         }
         try {
             Integer sys = parseIntOrNull(systolicField.getText());
             Integer dia = parseIntOrNull(diastolicField.getText());
-            Double tc = parseDoubleOrNull(totalCholesterolField.getText());
-            Double hdl = parseDoubleOrNull(hdlField.getText());
-            Double ldl = parseDoubleOrNull(ldlField.getText());
             Double w = parseDoubleOrNull(weightField.getText());
-            String notes = notesField.getText();
-            LocalDateTime when = parseDateTimeOrNow(measurementDateTimeField.getText());
+            String notes = bpNotesField.getText();
+            LocalDateTime when = parseDateTimeOrNow(bpDateTimeField.getText());
 
-            measurementService.addMeasurement(user.getUserId(), sys, dia, tc, hdl, ldl, w, notes, when);
-            HealthAlertResult health = healthAlertService.analyze(sys, dia, tc, hdl, ldl);
+            measurementService.addMeasurement(user.getUserId(), sys, dia, null, null, null, w, notes, when);
+            HealthAlertResult health = healthAlertService.analyze(sys, dia, null, null, null);
             applyHealthSummary(health);
             showHealthAlertDialog(health);
-            clearForm();
-            measurementDateTimeField.setText(DT_DISPLAY.format(LocalDateTime.now()));
+            clearBpForm();
             refreshTable();
             refreshCharts();
         } catch (NumberFormatException e) {
-            formErrorLabel.setText("Enter valid numbers for numeric fields.");
+            bpFormErrorLabel.setText("Enter valid numbers for numeric fields.");
         } catch (DateTimeParseException e) {
-            formErrorLabel.setText("Use US date/time, e.g. 3/31/2026 3:45 PM");
+            bpFormErrorLabel.setText("Use US date/time, e.g. 3/31/2026 3:45 PM");
         } catch (IllegalArgumentException e) {
-            formErrorLabel.setText(e.getMessage());
+            bpFormErrorLabel.setText(e.getMessage());
         } catch (SQLException e) {
-            formErrorLabel.setText("Could not save measurement.");
+            bpFormErrorLabel.setText("Could not save measurement.");
+        }
+    }
+
+    @FXML
+    private void onAddCholesterol() {
+        cholFormErrorLabel.setText("");
+        var user = SessionContext.getCurrentUser();
+        if (user == null || user.getUserId() == null) {
+            cholFormErrorLabel.setText("Not signed in.");
+            return;
+        }
+        try {
+            Double tc = parseDoubleOrNull(totalCholesterolField.getText());
+            Double hdl = parseDoubleOrNull(hdlField.getText());
+            Double ldl = parseDoubleOrNull(ldlField.getText());
+            String notes = cholNotesField.getText();
+            LocalDateTime when = parseDateTimeOrNow(cholDateTimeField.getText());
+
+            measurementService.addMeasurement(user.getUserId(), null, null, tc, hdl, ldl, null, notes, when);
+            HealthAlertResult health = healthAlertService.analyze(null, null, tc, hdl, ldl);
+            applyHealthSummary(health);
+            showHealthAlertDialog(health);
+            clearCholForm();
+            refreshTable();
+            refreshCharts();
+        } catch (NumberFormatException e) {
+            cholFormErrorLabel.setText("Enter valid numbers for numeric fields.");
+        } catch (DateTimeParseException e) {
+            cholFormErrorLabel.setText("Use US date/time, e.g. 3/31/2026 3:45 PM");
+        } catch (IllegalArgumentException e) {
+            cholFormErrorLabel.setText(e.getMessage());
+        } catch (SQLException e) {
+            cholFormErrorLabel.setText("Could not save measurement.");
         }
     }
 
@@ -323,7 +362,7 @@ public class DashboardController {
                 refreshTable();
                 refreshCharts();
             } catch (SQLException e) {
-                formErrorLabel.setText("Could not update measurement.");
+                bpFormErrorLabel.setText("Could not update measurement.");
             }
         });
     }
@@ -340,7 +379,7 @@ public class DashboardController {
             }
             var user = SessionContext.getCurrentUser();
             if (user == null || user.getUserId() == null || measurement.getMeasurementId() == null) {
-                formErrorLabel.setText("Could not delete measurement.");
+                bpFormErrorLabel.setText("Could not delete measurement.");
                 return;
             }
             try {
@@ -348,19 +387,25 @@ public class DashboardController {
                 refreshTable();
                 refreshCharts();
             } catch (SQLException e) {
-                formErrorLabel.setText("Could not delete measurement.");
+                bpFormErrorLabel.setText("Could not delete measurement.");
             }
         });
     }
 
-    private void clearForm() {
+    private void clearBpForm() {
         systolicField.clear();
         diastolicField.clear();
+        weightField.clear();
+        bpNotesField.clear();
+        bpDateTimeField.setText(DT_DISPLAY.format(LocalDateTime.now()));
+    }
+
+    private void clearCholForm() {
         totalCholesterolField.clear();
         hdlField.clear();
         ldlField.clear();
-        weightField.clear();
-        notesField.clear();
+        cholNotesField.clear();
+        cholDateTimeField.setText(DT_DISPLAY.format(LocalDateTime.now()));
     }
 
     private void refreshTable() {
@@ -378,7 +423,7 @@ public class DashboardController {
             }
             measurementTable.setItems(FXCollections.observableArrayList(rows));
         } catch (SQLException e) {
-            formErrorLabel.setText("Could not load measurements.");
+            bpFormErrorLabel.setText("Could not load measurements.");
         }
     }
 

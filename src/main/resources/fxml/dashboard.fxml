@@ -69,29 +69,41 @@
                                     </content>
                                 </ScrollPane>
                                 <Separator/>
-                                <Label styleClass="subheading" text="Add measurement"/>
+                                <Label styleClass="subheading" text="Add blood pressure"/>
                                 <GridPane hgap="10.0" vgap="8.0">
                                     <children>
                                         <Label text="Systolic" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                                         <TextField fx:id="systolicField" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
                                         <Label text="Diastolic" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
                                         <TextField fx:id="diastolicField" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
-                                        <Label text="Total chol." GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                                        <TextField fx:id="totalCholesterolField" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                                        <Label text="HDL" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-                                        <TextField fx:id="hdlField" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
-                                        <Label text="LDL" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                                        <TextField fx:id="ldlField" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                                        <Label text="Weight" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
-                                        <TextField fx:id="weightField" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
-                                        <Label text="Date / time" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                                        <TextField fx:id="measurementDateTimeField" prefWidth="260.0" promptText="M/d/yyyy h:mm AM or PM" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3"/>
-                                        <Label text="Notes" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-                                        <TextField fx:id="notesField" prefWidth="340.0" promptText="Optional notes" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="4"/>
+                                        <Label text="Weight" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                        <TextField fx:id="weightField" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                                        <Label text="Date / time" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                        <TextField fx:id="bpDateTimeField" prefWidth="260.0" promptText="M/d/yyyy h:mm AM or PM" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2"/>
+                                        <Label text="Notes" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                                        <TextField fx:id="bpNotesField" prefWidth="340.0" promptText="Optional notes" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3"/>
                                     </children>
                                 </GridPane>
-                                <Label fx:id="formErrorLabel" styleClass="error" wrapText="true"/>
-                                <Button mnemonicParsing="false" onAction="#onAddMeasurement" text="Save measurement"/>
+                                <Label fx:id="bpFormErrorLabel" styleClass="error" wrapText="true"/>
+                                <Button mnemonicParsing="false" onAction="#onAddBloodPressure" text="Save blood pressure"/>
+                                <Separator/>
+                                <Label styleClass="subheading" text="Add cholesterol"/>
+                                <GridPane hgap="10.0" vgap="8.0">
+                                    <children>
+                                        <Label text="Total chol." GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                        <TextField fx:id="totalCholesterolField" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                                        <Label text="HDL" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                                        <TextField fx:id="hdlField" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+                                        <Label text="LDL" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                        <TextField fx:id="ldlField" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                                        <Label text="Date / time" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                        <TextField fx:id="cholDateTimeField" prefWidth="260.0" promptText="M/d/yyyy h:mm AM or PM" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2"/>
+                                        <Label text="Notes" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                                        <TextField fx:id="cholNotesField" prefWidth="340.0" promptText="Optional notes" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3"/>
+                                    </children>
+                                </GridPane>
+                                <Label fx:id="cholFormErrorLabel" styleClass="error" wrapText="true"/>
+                                <Button mnemonicParsing="false" onAction="#onAddCholesterol" text="Save cholesterol"/>
                             </children>
                         </VBox>
                     </content>
