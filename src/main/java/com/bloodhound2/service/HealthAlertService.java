@@ -86,6 +86,11 @@ public final class HealthAlertService {
                     "Your blood pressure is a bit higher than ideal (elevated). Healthy habits may help bring it down over time.");
             return;
         }
+        if (sys < 90 || dia < 60) {
+            concerns.add(
+                    "Your blood pressure appears lower than typical (<90/<60). If you feel dizzy, faint, weak, or unwell, contact your doctor promptly.");
+            return;
+        }
         if (sys < 120 && dia < 80) {
             goodNews.add("Your blood pressure is in a healthy range.");
         }

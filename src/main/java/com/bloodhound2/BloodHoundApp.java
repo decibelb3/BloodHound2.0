@@ -17,6 +17,11 @@ import java.util.Objects;
 
 public class BloodHoundApp extends Application implements AppNavigator {
 
+    private static final double DEFAULT_WIDTH = 1080;
+    private static final double DEFAULT_HEIGHT = 820;
+    private static final double MIN_WIDTH = 980;
+    private static final double MIN_HEIGHT = 740;
+
     private Stage primaryStage;
     private final AppContext context = new AppContext();
 
@@ -24,6 +29,8 @@ public class BloodHoundApp extends Application implements AppNavigator {
     public void start(Stage stage) {
         this.primaryStage = stage;
         stage.setTitle("BloodHound 2.0");
+        stage.setMinWidth(MIN_WIDTH);
+        stage.setMinHeight(MIN_HEIGHT);
         showLogin();
         stage.show();
     }
@@ -50,7 +57,7 @@ public class BloodHoundApp extends Application implements AppNavigator {
                     new FXMLLoader(Objects.requireNonNull(BloodHoundApp.class.getResource(resource)));
             loader.setController(controller);
             Parent root = loader.load();
-            Scene scene = new Scene(root, 920, 680);
+            Scene scene = new Scene(root, DEFAULT_WIDTH, DEFAULT_HEIGHT);
             scene.getStylesheets().add(
                     Objects.requireNonNull(BloodHoundApp.class.getResource("/styles/app.css"))
                             .toExternalForm());

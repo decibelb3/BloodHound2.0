@@ -54,6 +54,18 @@ public class MeasurementService {
         return measurementDao.findByUserIdChronological(userId);
     }
 
+    /** Oldest first within an inclusive date-time range. */
+    public List<Measurement> listForUserByDateRange(
+            long userId, LocalDateTime startInclusive, LocalDateTime endInclusive) throws SQLException {
+        if (startInclusive == null || endInclusive == null) {
+            throw new IllegalArgumentException("Start and end date/time are required.");
+        }
+        if (endInclusive.isBefore(startInclusive)) {
+            throw new IllegalArgumentException("End date/time must be on or after start date/time.");
+        }
+        return measurementDao.findByUserIdWithinDateRange(userId, startInclusive, endInclusive);
+    }
+
     /**
      * Updates the measurement with the given ID, only if it belongs to {@code userId}.
      *

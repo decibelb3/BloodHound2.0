@@ -69,6 +69,31 @@ public class MeasurementDao {
         return queryList(userId, sql);
     }
 
+    /**
+     * Measurements for a user within an inclusive date-time range, oldest first.
+     */
+    public List<Measurement> findByUserIdWithinDateRange(
+            long userId, LocalDateTime startInclusive, LocalDateTime endInclusive) throws SQLException {
+        final String sql =
+                "SELECT measurement_id, user_id, systolic, diastolic, total_cholesterol, hdl, ldl, "
+                        + "weight, notes, measurement_datetime FROM measurements WHERE user_id = ? "
+                        + "AND measurement_datetime >= ? AND measurement_datetime <= ? "
+                        + "ORDER BY measurement_datetime ASC, measurement_id ASC";
+        List<Measurement> list = new ArrayList<>();
+        try (Connection conn = databaseConfig.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, userId);
+            ps.setTimestamp(2, Timestamp.valueOf(startInclusive));
+            ps.setTimestamp(3, Timestamp.valueOf(endInclusive));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
+            }
+        }
+        return list;
+    }
+
     private List<Measurement> queryList(long userId, String sql) throws SQLException {
         List<Measurement> list = new ArrayList<>();
         try (Connection conn = databaseConfig.getConnection();
