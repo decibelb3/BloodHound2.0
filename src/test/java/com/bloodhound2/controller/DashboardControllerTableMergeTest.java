@@ -23,7 +23,7 @@ class DashboardControllerTableMergeTest {
         List<Measurement> merged = DashboardController.mergeRowsForDisplay(List.of(chol, bp));
 
         assertEquals(1, merged.size());
-        Measurement row = merged.getFirst();
+        Measurement row = merged.get(0);
         assertEquals(120, row.getSystolic());
         assertEquals(78, row.getDiastolic());
         assertEquals(200.0, row.getTotalCholesterol());
